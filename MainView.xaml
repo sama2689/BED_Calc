@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="BED_Calc.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BED_Calc"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="200" Background="FloralWhite">
+   
+        <StackPanel>
+            <Label HorizontalAlignment="Center">Contour Name</Label>
+            <TextBox Name="OrganNameTB" Width="150" HorizontalAlignment="Center">PTV</TextBox>
+            <Label HorizontalAlignment="Center">Alpha/Beta Ratio (Gy)</Label>
+        <TextBox Name="AlphaBetaRatioTB" Width="150" HorizontalAlignment="Center">3</TextBox>
+            <Button Margin="10" Width="150" HorizontalAlignment="Center" Click="Button_Click">Calculate BED/EQD2</Button>
+            <Label HorizontalAlignment="Center">BED (Gy)</Label>
+            <TextBox Name="BEDTB" Width="150" HorizontalAlignment="Center"
+                     Background="Gainsboro"  IsReadOnly="True"></TextBox>
+            <Label HorizontalAlignment="Center">EQD2(Gy)</Label>
+            <TextBox Name="EQD2TB" Width="150" HorizontalAlignment="Center" IsReadOnly="True"
+                     Background="Gainsboro"></TextBox>
+    </StackPanel>
+        
+            
+        
+    
+</UserControl>
