@@ -5,14 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BED_Calc"
              mc:Ignorable="d" 
-             d:DesignHeight="250" d:DesignWidth="200" Background="FloralWhite">
+             d:DesignHeight="300" d:DesignWidth="350" Background="FloralWhite">
    
         <StackPanel>
             <Label HorizontalAlignment="Center">Contour Name</Label>
             <TextBox Name="OrganNameTB" Width="150" HorizontalAlignment="Center">PTV</TextBox>
             <Label HorizontalAlignment="Center">Alpha/Beta Ratio (Gy)</Label>
-        <TextBox Name="AlphaBetaRatioTB" Width="150" HorizontalAlignment="Center">3</TextBox>
+            <TextBox Name="AlphaBetaRatioTB" Width="150" HorizontalAlignment="Center">3</TextBox>
             <Button Margin="10" Width="150" HorizontalAlignment="Center" Click="Button_Click">Calculate BED/EQD2</Button>
+
+            <Label HorizontalAlignment="Center" Content="Input Dose (Enter either Mean, Max, Min, DN% or DNcc)"/>
+            <TextBox Name="DoseTypeTB" Width="150" HorizontalAlignment="Center">Mean</TextBox>
+
             <Label HorizontalAlignment="Center">BED (Gy)</Label>
             <TextBox Name="BEDTB" Width="150" HorizontalAlignment="Center"
                      Background="Gainsboro"  IsReadOnly="True"></TextBox>
