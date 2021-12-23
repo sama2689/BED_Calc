@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BED_Calc"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="350" Background="FloralWhite">
+             d:DesignHeight="350" d:DesignWidth="350" Background="FloralWhite">
    
-        <StackPanel>
+        <StackPanel Margin="10">
             <Label HorizontalAlignment="Center">Contour Name</Label>
             <TextBox Name="OrganNameTB" Width="150" HorizontalAlignment="Center">PTV</TextBox>
             <Label HorizontalAlignment="Center">Alpha/Beta Ratio (Gy)</Label>
@@ -17,10 +17,15 @@
             <Label HorizontalAlignment="Center" Content="Input Dose Type (enter either Mean, Max, Min, DN% or DNcc)"/>
             <TextBox Name="DoseTypeTB" Width="150" HorizontalAlignment="Center">Mean</TextBox>
 
+
+            <Label HorizontalAlignment="Center">Absolute Dose (Gy)</Label>
+            <TextBox Name="AbsoluteDoseTB" Width="150" HorizontalAlignment="Center"
+                         Background="Gainsboro"  IsReadOnly="True"></TextBox>
+
             <Label HorizontalAlignment="Center">BED (Gy)</Label>
             <TextBox Name="BEDTB" Width="150" HorizontalAlignment="Center"
                      Background="Gainsboro"  IsReadOnly="True"></TextBox>
-            <Label HorizontalAlignment="Center">EQD2(Gy)</Label>
+            <Label HorizontalAlignment="Center">EQD2 (Gy)</Label>
             <TextBox Name="EQD2TB" Width="150" HorizontalAlignment="Center" IsReadOnly="True"
                      Background="Gainsboro"></TextBox>
     </StackPanel>

@@ -48,8 +48,8 @@ namespace BED_Calc
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            //set organ name and alpha beta ratio on what was specified
             organName=OrganNameTB.Text;
-            float.TryParse(organName, out alphaBetaRatio);
             alphaBetaRatio = float.Parse(AlphaBetaRatioTB.Text);
 
             StructureSet structureSet = planSetup.StructureSet;
@@ -99,8 +99,10 @@ namespace BED_Calc
                     bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
                     eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
 
-                    BEDTB.Text = bed.ToString();
-                    EQD2TB.Text = eqd2.ToString();
+
+                    AbsoluteDoseTB.Text=dose.ToString("0.0");
+                    BEDTB.Text = bed.ToString("0.0");
+                    EQD2TB.Text = eqd2.ToString("0.0");
 
                     /*this is for debugging only
                     MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
@@ -117,8 +119,9 @@ namespace BED_Calc
                     bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
                     eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
 
-                    BEDTB.Text = bed.ToString();
-                    EQD2TB.Text = eqd2.ToString();
+                    AbsoluteDoseTB.Text = dose.ToString("0.0");
+                    BEDTB.Text = bed.ToString("0.0");
+                    EQD2TB.Text = eqd2.ToString("0.0");
 
                     /*this is for debugging only
                     MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
@@ -134,22 +137,82 @@ namespace BED_Calc
                     bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
                     eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
 
-                    BEDTB.Text = bed.ToString();
-                    EQD2TB.Text = eqd2.ToString();
+                    AbsoluteDoseTB.Text = dose.ToString("0.0");
+                    BEDTB.Text = bed.ToString("0.0");
+                    EQD2TB.Text = eqd2.ToString("0.0");
 
                     /*this is for debugging only
                     MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
                         "Dose Per Fraction={2}, Number of Fractions= {3}", organName, dose,dosePerFraction, numberOfFractions));*/
                 }
-                else if (DoseTypeTB.Text.EndsWith("cc"))
+                else if (DoseTypeTB.Text.EndsWith("cc") && DoseTypeTB.Text.StartsWith("D"))
                 {
 
+                    string volString = FindStringBetween("D", "cc", DoseTypeTB.Text);
 
-                    MessageBox.Show("Still working on retriving cc doses");
+
+                    bool success = float.TryParse(volString, out float volFloat);
+
+                    if (success)
+                    {
+                        //MessageBox.Show(String.Format("Debug: Sucessfully converted absolute volume to float, value is {0}cc", volFloat));
+                    }
+                    else
+                    {
+                        MessageBox.Show("Incorrect Dose Format, your dose must have format \"DNcc\" where N is the volume in cc. N must be a number");
+                    }
+                    //at this point, we have sucessfully converted the volume in cc to a float from the entered string. Let's find the dose that corresponds to this
+                    DVHData dvhData = planSetup.GetDVHCumulativeData(target, //extract absolute dvh
+                        DoseValuePresentation.Absolute,
+                        VolumePresentation.AbsoluteCm3, 0.1);
+                    float dose = (float)DoseAtVolume(dvhData, volFloat).Dose;
+                    float dosePerFraction = dose / numberOfFractions;
+                    bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
+                    eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
+
+                    AbsoluteDoseTB.Text = dose.ToString("0.0");
+                    BEDTB.Text = bed.ToString("0.0");
+                    EQD2TB.Text = eqd2.ToString("0.0");
+
+
+                    //MessageBox.Show("Debug: volume is " + volString+"cc");
                 }
-                else if (DoseTypeTB.Text.EndsWith("%"))
+                else if (DoseTypeTB.Text.EndsWith("%") && DoseTypeTB.Text.StartsWith("D"))
                 {
-                    MessageBox.Show("Still working on retriving % doses");
+                    //since this is the % case, we convert from % volume to cc by multiplying through. This is built into the Dose at volume function if you extract your dvh properly
+
+
+
+
+                    string volString = FindStringBetween("D", "%", DoseTypeTB.Text);
+                    
+                    bool success = float.TryParse(volString, out float volFloat);
+
+                    if (success)
+                    {
+                        //MessageBox.Show(String.Format("Debug: Sucessfully converted volume % to float, value is {0}%", volFloat));
+                    }
+                    else
+                    {
+                        MessageBox.Show("Incorrect Dose Format, your dose must have format \"DN%\" where N is the volume in %. N must be a number");
+                    }
+
+                    DVHData dvhData = planSetup.GetDVHCumulativeData(target,
+                        DoseValuePresentation.Absolute,
+                        VolumePresentation.Relative,0.1);
+
+                    float dose = (float)DoseAtVolume(dvhData, volFloat).Dose;
+                    float dosePerFraction = dose / numberOfFractions;
+                    bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
+                    eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
+
+                    AbsoluteDoseTB.Text = dose.ToString("0.0");
+                    BEDTB.Text = bed.ToString("0.0");
+                    EQD2TB.Text = eqd2.ToString("0.0");
+
+
+                    //MessageBox.Show("Debug: volume is "+volString+"%");
+                    //MessageBox.Show("Still working on retriving % doses");
                 }
                 else
                 {
@@ -159,11 +222,17 @@ namespace BED_Calc
 
 
         }
-
-
-        public static DoseValue DoseAtVolume(DVHData dvhData, double volume) //volume lookup
+        private static string FindStringBetween(string firstString, string secondString, string wholeString)
         {
-            if (dvhData == null || dvhData.CurveData.Count() == 0)
+            int pFrom = wholeString.IndexOf(firstString) + firstString.Length;
+            int pTo = wholeString.LastIndexOf(secondString);
+
+            return wholeString.Substring(pFrom, pTo - pFrom);
+        }
+
+        private static DoseValue DoseAtVolume(DVHData dvhData, double volume) //volume lookup
+        {
+            if (dvhData == null || dvhData.CurveData.Count() == 0) //if the DVH is empty then return undefined dose
                 return DoseValue.UndefinedDose();
             double absVolume = dvhData.CurveData[0].VolumeUnit == "%" ? volume * dvhData.Volume * 0.01 : volume;
             if (volume < 0.0 || absVolume > dvhData.Volume)

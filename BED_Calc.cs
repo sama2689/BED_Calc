@@ -38,6 +38,7 @@ namespace VMS.TPS
         var mainView = new BED_Calc.MainView(context);
         window.Title = "BED/EQD2 Calculator";
         window.Content = mainView; //contents to be displayed on window
+            window.SizeToContent = SizeToContent.WidthAndHeight;
 
         }
     }
