@@ -59,12 +59,14 @@ namespace BED_Calc
             //find structure if it exists, if it does, set target equal to that structure. throw exce
             Structure target = null;
 
+            bool StructureEmpty = false;
             foreach (var structure in structureSet.Structures)
                 {   
                     if (structure.Id == organName)
                     {
                         if (structure.IsEmpty)
                         {
+                            
                             MessageBox.Show(String.Format("Structure {0} is empty, try another structure", organName));
                             target = null;
                             break;
@@ -78,28 +80,75 @@ namespace BED_Calc
                     }
                 }
             
-            if (target == null)
-                MessageBox.Show(String.Format("I can't find a non-empty structure called {0}", organName));
+            if (target == null && !StructureEmpty)
+                MessageBox.Show(String.Format("I can't find a structure called {0}", organName));
             
-            else 
+            else if (DoseTypeTB.Text.Equals("Mean")) //if target is not null and structure is not empty then we can retriev our dose, we split into cases 
             {
                 DVHData dvhData = planSetup.GetDVHCumulativeData(target,
                                         DoseValuePresentation.Absolute,
                                         VolumePresentation.AbsoluteCm3, 0.1);
-                float meanDose = (float)dvhData.MeanDose.Dose;//compute mean dose            
-                float dosePerFraction = meanDose / numberOfFractions;
-                bed = meanDose * (1.0f + dosePerFraction / alphaBetaRatio);
-                eqd2 = meanDose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
+                float dose = (float)dvhData.MeanDose.Dose;//compute mean dose            
+                float dosePerFraction = dose / numberOfFractions;
+                bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
+                eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
 
                 BEDTB.Text = bed.ToString();
                 EQD2TB.Text = eqd2.ToString();
-                //this is for debugging only
+
+                /*this is for debugging only
                 MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
-                    "Dose Per Fraction={2}, Number of Fractions= {3}", organName, meanDose,dosePerFraction, numberOfFractions));
+                    "Dose Per Fraction={2}, Number of Fractions= {3}", organName, dose,dosePerFraction, numberOfFractions));*/
             }
 
-            
-            
+            else if (DoseTypeTB.Text.Equals("Max")) //if target is not null and structure is not empty then we can retriev our dose, we split into cases 
+            {
+                DVHData dvhData = planSetup.GetDVHCumulativeData(target,
+                                        DoseValuePresentation.Absolute,
+                                        VolumePresentation.AbsoluteCm3, 0.1);
+                float dose = (float)dvhData.MaxDose.Dose;//compute mean dose            
+                float dosePerFraction = dose / numberOfFractions;
+                bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
+                eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
+
+                BEDTB.Text = bed.ToString();
+                EQD2TB.Text = eqd2.ToString();
+
+                /*this is for debugging only
+                MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
+                    "Dose Per Fraction={2}, Number of Fractions= {3}", organName, dose,dosePerFraction, numberOfFractions));*/
+            }
+            else if (DoseTypeTB.Text.Equals("Min")) //if target is not null and structure is not empty then we can retriev our dose, we split into cases 
+            {
+                DVHData dvhData = planSetup.GetDVHCumulativeData(target,
+                                        DoseValuePresentation.Absolute,
+                                        VolumePresentation.AbsoluteCm3, 0.1);
+                float dose = (float)dvhData.MinDose.Dose;//compute mean dose            
+                float dosePerFraction = dose / numberOfFractions;
+                bed = dose * (1.0f + dosePerFraction / alphaBetaRatio);
+                eqd2 = dose * ((dosePerFraction + alphaBetaRatio) / (2.0f + alphaBetaRatio));
+
+                BEDTB.Text = bed.ToString();
+                EQD2TB.Text = eqd2.ToString();
+
+                /*this is for debugging only
+                MessageBox.Show(String.Format("Organ={0}, MeanDose={1}," +
+                    "Dose Per Fraction={2}, Number of Fractions= {3}", organName, dose,dosePerFraction, numberOfFractions));*/
+            }
+            else if (DoseTypeTB.Text.EndsWith("cc"))
+            {
+                MessageBox.Show("Still working on retriving cc doses");
+            }
+            else if (DoseTypeTB.Text.EndsWith("%"))
+            {
+                MessageBox.Show("Still working on retriving % doses");
+            }
+            else
+            {
+                MessageBox.Show("Invalid Dose type, please enter either enter either \"Mean\", \"Max\", \"Min\", \"DNcc\" or \"DN%\" into the Input Dose box.");
+            }
+
+
         }
 
 
